@@ -5,7 +5,7 @@ This is an example of how to produce and consume messages against an [Apache Kaf
 
 If you find this repository useful please give it ⭐️
 
-The example is based around the simple concept of smart doors with sensors that exist within a building.  These doors produce events when they are opened and closed which are published to a Kakfa topic.  These events are then consumed by interested parties.
+The example is based around the simple concept of smart doors with sensors that exist within a building.  These doors produce events when they are opened and closed which are published to a Kafka topic.  These events are then consumed by interested parties.
 
 The solution contains 3 projects:
 
