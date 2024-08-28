@@ -51,17 +51,11 @@ public class DoorEventProducer : BackgroundService
                 
                 if (_logger.IsEnabled(LogLevel.Debug))
                 {
-                    _logger.LogDebug("Event {id} stored in partition {partition} Offset {offset}", doorEvent.EventId, deliveryReport.TopicPartition.Partition.Value, deliveryReport.Offset.Value);
-                }
-
-                int delay = Random.Next(1, 10);
-                
-                if (_logger.IsEnabled(LogLevel.Debug))
-                {
-                    _logger.LogDebug("Pausing for {delay}ms", delay);
+                    _logger.LogDebug("Event {id} stored in partition {partition} Offset {offset}", doorEvent.EventId, deliveryReport.TopicPartition.Partition.Value, deliveryReport.Offset.Value); 
+                    _logger.LogDebug("Pausing for {pauseAfterSendMs}ms", _configuration.PauseAfterSendMs);
                 }
                 
-                await Task.Delay(delay, stoppingToken);
+                await Task.Delay(_configuration.PauseAfterSendMs, stoppingToken);
             }
             catch (ProduceException<Null, string> e)
             {
@@ -69,7 +63,6 @@ public class DoorEventProducer : BackgroundService
                 {
                     _logger.LogError("Kafka error {kafkaError}", e);
                 }
-                
             }
         }
 

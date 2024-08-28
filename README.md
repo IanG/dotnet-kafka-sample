@@ -74,7 +74,8 @@ The JSON in `appsettings.json` should be as follows:
 "DoorEventProducerWorker": {
   "bootstrapServers": "localhost:9092",
   "clientId": "DoorEventProducerWorker",
-  "topic": "door-events"
+  "topic": "door-events",
+  "PauseAfterSendMs": 1000
 },
 ```
 ### Running The Producer
@@ -93,13 +94,13 @@ You should now see output similar to this in the console:
 [INF] [Microsoft.Hosting.Lifetime] Hosting environment: "Development"
 [INF] [Microsoft.Hosting.Lifetime] Content root path: "./DotNetKafkaSample/Producer"
 [DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Event 223eea0a-e399-46ca-87f1-3eb5aa8c7de8 stored in partition 0 Offset 1
-[DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Pausing for 4ms
+[DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Pausing for 1000ms
 [DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Sending "DoorOpenEvent" event for door "8" with id 7409f762-9740-4c3e-9796-9f47a188d960 to Kafka...
 [DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Event 7409f762-9740-4c3e-9796-9f47a188d960 stored in partition 0 Offset 2
-[DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Pausing for 6ms
+[DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Pausing for 1000ms
 [DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Sending "DoorOpenEvent" event for door "2" with id a7cda6cb-6289-4a76-8ba6-561811f3a93a to Kafka...
 [DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Event a7cda6cb-6289-4a76-8ba6-561811f3a93a stored in partition 0 Offset 3
-[DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Pausing for 9ms
+[DBG] [DotNetKafkaSample.Producer.Workers.DoorEventProducer] Pausing for 1000ms
 ```
 You can stop the worker and new door event messages being produced with `ctrl+c`.
 
