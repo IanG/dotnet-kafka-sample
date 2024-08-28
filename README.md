@@ -167,7 +167,7 @@ If you now issue a `docker image ls` command you will see that images now exist 
 
 ### Running a multi-container Docker Application
 
-There is a `docker-compose.yaml` file in the root of  the project which will create a multi-container Docker application with:
+There is a `docker-compose.yml` file in the root of the project which will create a multi-container Docker application with:
 
 - A single Apache Kafka instance
 - A [Kafka-UI](https://github.com/provectus/kafka-ui) web-based administration console which can be accessed from http://localhost:80
@@ -186,6 +186,15 @@ If you want to remove the application from your Docker installation you can do t
 docker-compose rm -f
 ```
 
+#### Can I connect to the Kafka instance from outside of the docker network ?
+
+Yes you can.  The Kafka instance running in docker exposes itself outside of the docker internal network on port `29092`.   If you want to connect from outside your bootstrap-server needs to be `localhost:29092`.   You can test this with your own application or use the [kcat](https://github.com/edenhill/kcat) tool to do this with something like
+
+```
+kcat -b localhost:29092 -L
+```
+
+You can even start more instances of the `Producer` worker above locally if you modify the `bootstrapServers` property in `appsettings.json` to `localhost:29092`.  Give it a try - and take a look in `docker-compose.yml` to see how this is achieved - there is specific Kafka config to make this happen, this is not as simple as just exposing the port from the container because of how Kafka advertises broker nodes to its clients.
 
 ## Technologies used
 
