@@ -6,6 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-TestKafkaMessageProducer-8f9add78-04c0-4177-8434-bcbf5246e3b6</UserSecretsId>
         <RootNamespace>DotNetKafkaSample.Producer</RootNamespace>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <AssemblyName>DotNetKafkaSample.Producer</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,5 +24,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 </Project>

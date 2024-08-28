@@ -2,6 +2,9 @@
 
 ## Introduction
 This is an example of how to produce and consume messages against an [Apache Kafka](https://kafka.apache.org/) topic using [.NET Worker Services](https://learn.microsoft.com/en-us/dotnet/core/extensions/workers).
+
+If you find this repository useful please give it ⭐️
+
 The example is based around the simple concept of smart doors with sensors that exist within a building.  These doors produce events when they are opened and closed which are published to a Kakfa topic.  These events are then consumed by interested parties.
 
 The solution contains 3 projects:
@@ -9,8 +12,6 @@ The solution contains 3 projects:
 - **Common** - this project contains POCO objects that represent events that can occur for smart doors.
 - **Producer** - this project is a .NET worker service which randomly creates `DoorOpen` and `DoorClosed` events and produces them onto the configured Kafka topic
 - **Consumer** - this project is a .NET worker service which consumes smart door events from the configured Kafka topic
-
-If you find this repository useful please give it ⭐️
 
 **Note** at present this example does not cover more advanced concepts such as:
 - Client Authentication
@@ -64,9 +65,10 @@ The `Producer` project within the solution is a .NET Worker that will randomly p
 ### Configuration
 The `appsettings.json` file in this project contains the following configuration section which describes its configuration parameters for:
 
-- **bootstrap servers** - the `<host:port>` list of Kafka brokers to connect to
+- **bootstrapservers** - the `<host:port>` list of Kafka brokers to connect to
 - **clientid** - the Kafka identifier assigned to the client connection to the broker
 - **topic** - the Kafka topic onto which new messages will be produced
+- **pauseaftersendms** - how many milliseconds delay should occur between each message being sent
 
 The JSON in `appsettings.json` should be as follows:
 
@@ -149,6 +151,40 @@ You should now see output similar to this in the console:
 [DBG] [DotNetKafkaSample.Consumer.Workers.DoorEventConsumer] Waiting for next message in topic "door-events"
 ```
 You can stop the worker and new door event messages being consumed with `ctrl+c`.
+
+## Running Apache Kafka, the Consumer and Producer inside of Docker
+
+### Building .NET Worker Images
+
+`DockerFile`'s exist in both projects and images can be built using the following commands:
+
+```
+docker build -f Producer/Dockerfile -t dotnetkafkatest/door-event-producer  .
+docker build -f Consumer/Dockerfile -t dotnetkafkatest/door-event-consumer  .
+```
+
+If you now issue a `docker image ls` command you will see that images now exist for both the producer and consumer.  
+
+### Running a multi-container Docker Application
+
+There is a `docker-compose.yaml` file in the root of  the project which will create a multi-container Docker application with:
+
+- A single Apache Kafka instance
+- A [Kafka-UI](https://github.com/provectus/kafka-ui) web-based administration console which can be accessed from http://localhost:80
+- A Producer .NET worker service which produces messages to the Kafka topic `door-events`
+- A Consumer .NET worker service which consumes messages from the Kafka topic `door-events`
+
+You can run this with:
+
+```
+docker-compose up
+```
+
+If you want to remove the application from your Docker installation you can do this with:
+
+```
+docker-compose rm -f
+```
 
 
 ## Technologies used
