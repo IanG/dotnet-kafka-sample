@@ -1,0 +1,142 @@
+name: dotnet-kafka-sample
+
+services:
+  apache-kafka-node1:
+    container_name: apache-kafka-node1
+    image: apache/kafka:latest
+    hostname: apache-kafka-node1
+    environment:
+      CLUSTER_ID: wedpDkYGQ162jZxIqWytCg
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://apache-kafka-node1:9092,EXTERNAL_SAME_HOST://:29092,CONTROLLER://apache-kafka-node1:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://apache-kafka-node1:9092,EXTERNAL_SAME_HOST://localhost:29092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL_SAME_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@apache-kafka-node1:9093,2@apache-kafka-node2:9093,3@apache-kafka-node3:9093
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_JMX_PORT: 9997
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=apache-kafka-node1 -Dcom.sun.management.jmxremote.rmi.port=9997
+    ports:
+      - "29092:29092"
+    networks:
+      - dotnet-kafka-sample-net
+
+  apache-kafka-node2:
+    container_name: apache-kafka-node2
+    image: apache/kafka:latest
+    hostname: apache-kafka-node2
+    environment:
+      CLUSTER_ID: wedpDkYGQ162jZxIqWytCg
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://apache-kafka-node2:9092,EXTERNAL_SAME_HOST://:29093,CONTROLLER://apache-kafka-node2:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://apache-kafka-node2:9092,EXTERNAL_SAME_HOST://localhost:29093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL_SAME_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@apache-kafka-node1:9093,2@apache-kafka-node2:9093,3@apache-kafka-node3:9093
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_JMX_PORT: 9997
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=apache-kafka-node2 -Dcom.sun.management.jmxremote.rmi.port=9997
+    ports:
+      - "29093:29093"
+    networks:
+      - dotnet-kafka-sample-net
+  
+  apache-kafka-node3:
+    container_name: apache-kafka-node3
+    image: apache/kafka:latest
+    hostname: apache-kafka-node3
+    environment:
+      CLUSTER_ID: wedpDkYGQ162jZxIqWytCg
+      KAFKA_NODE_ID: 3
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://apache-kafka-node3:9092,EXTERNAL_SAME_HOST://:29094,CONTROLLER://apache-kafka-node3:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://apache-kafka-node3:9092,EXTERNAL_SAME_HOST://localhost:29094
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL_SAME_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@apache-kafka-node1:9093,2@apache-kafka-node2:9093,3@apache-kafka-node3:9093
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_JMX_PORT: 9997
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=apache-kafka-node3 -Dcom.sun.management.jmxremote.rmi.port=9997
+    ports:
+      - "29094:29094"
+    networks:
+      - dotnet-kafka-sample-net
+  
+  kafa-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    restart: always
+    ports:
+      - "80:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: apache-kafka-node1:9092
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
+      KAFKA_CLUSTERS_1_NAME: local2
+      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: apache-kafka-node2:9092
+      KAFKA_CLUSTERS_1_METRICS_PORT: 9997
+      KAFKA_CLUSTERS_2_NAME: local3
+      KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS: apache-kafka-node3:9092
+      KAFKA_CLUSTERS_2_METRICS_PORT: 9997
+    networks:
+      - dotnet-kafka-sample-net
+    depends_on:
+      - apache-kafka-node1
+      - apache-kafka-node2
+      - apache-kafka-node3
+  
+  door-event-consumer:
+    container_name: door-event-consumer
+    image: dotnetkafkatest/door-event-consumer
+    hostname: door-event-consumer
+    build:
+      context: .
+      dockerfile: Consumer/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - DoorEventConsumerWorker:bootstrapServers=apache-kafka-node1:9092,apache-kafka-node2:9092,apache-kafka-node3:9092
+    networks:
+      - dotnet-kafka-sample-net
+    depends_on:
+      - apache-kafka-node1
+      - apache-kafka-node2
+      - apache-kafka-node3
+  
+  door-event-producer:
+    container_name: door-event-producer
+    image: dotnetkafkatest/door-event-producer
+    hostname: door-event-producer
+    build:
+      context: .
+      dockerfile: Producer/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+      - DoorEventProducerWorker:bootstrapServers=apache-kafka-node1:9092,apache-kafka-node2:9092,apache-kafka-node3:9092
+    networks:
+      - dotnet-kafka-sample-net
+    depends_on:
+      - apache-kafka-node1
+      - apache-kafka-node2
+      - apache-kafka-node3
+
+
+networks:
+  dotnet-kafka-sample-net:
+    driver: bridge
